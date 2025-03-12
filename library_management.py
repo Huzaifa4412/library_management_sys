@@ -2,7 +2,6 @@ import os
 import json
 import sys
 
-
 # ANSI color codes
 RESET = "\033[0m"
 RED = "\033[91m"
