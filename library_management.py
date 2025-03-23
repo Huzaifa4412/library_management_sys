@@ -11,7 +11,6 @@ def load_books():
     if os.path.exists(FILE_NAME):
         try:
             with open(FILE_NAME, "r") as file:
-                print("Books loaded successfully!")
                 return json.load(file)
         except:
             return []
@@ -110,7 +109,25 @@ def update_book():
         books[books_name().index(book_name)]["title"] = new_title
     if update_thing == "Author":
         new_author = st.text_input("New Author", value=books[books_name().index(book_name)]["author"])
-        books[books_name().index(books_name)]["author"] = new_author
+        books[books_name().index(book_name)]["author"] = new_author
+    if update_thing == "Genre":
+        new_genre = st.text_input("New Genre", value=books[books_name().index(book_name)]["genre"])
+        books[books_name().index(book_name)]["genre"] = new_genre
+    if update_thing == "Price":
+        new_price = st.number_input("New Price", value=books[books_name().index(book_name)]["price"])
+        books[books_name().index(book_name)]["price"] = new_price
+    if update_thing == "Quantity":
+        new_quantity = st.number_input("New Quantity", value=books[books_name().index(book_name)]["qnty"])
+        books[books_name().index(book_name)]["qnty"] = new_quantity
+    if update_thing == "Publish_year":
+        new_publish_year = st.text_input("New Publish Year", value=books[books_name().index(book_name)]["publish_year"])
+        books[books_name().index(book_name)]["publish_year"] = new_publish_year
+    if update_thing == "IsRead":
+        new_isRead = st.checkbox("Have you read this book?", value=books[books_name().index(book_name)]["isRead"])
+        books[books_name().index(book_name)]["isRead"] = new_isRead
+    if st.button("Update Book"):
+        save_books(books)
+        st.info("Book has been Updated Successfully")
     
 
 st.set_page_config(page_title="Library Management", layout="wide")
@@ -130,3 +147,5 @@ elif choice == "Search Book":
     search_books()
 elif choice == "Update Book":
     update_book()
+
+st.caption("Made with ❤️ by Huzaifa")

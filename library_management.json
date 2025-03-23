@@ -6,6 +6,6 @@
         "price": 5000,
         "qnty": 10,
         "publish_year": "2023",
-        "isRead": false
+        "isRead": true
     }
 ]
