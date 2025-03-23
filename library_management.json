@@ -1,30 +1,11 @@
 [
     {
-        "title": "Captain America",
-        "author": "Huzaifa",
-        "publish_year": "160",
-        "price": "91",
-        "qnty": "48",
-        "genre": "fighting",
-        "isRead": "n"
-    },
-    {
-        "title": "Harry Porter",
-        "author": "huzaifa",
-        "publish_year": "1980",
-        "price": "500",
-        "qnty": "5",
-        "genre": "magical",
-        "isRead": "y"
-    },
-    {
-        "title": "Harry porter",
-        "author": "ayan",
-        "publish_year": "1980",
-        "price": 12950.0,
-        "qnty": 564,
-        "genre": "fight",
-        "isRead": "y",
-        "borrowed": 0
+        "title": "bible of js",
+        "author": "unkhown",
+        "genre": "coding",
+        "price": 5000,
+        "qnty": 10,
+        "publish_year": "2023",
+        "isRead": false
     }
 ]

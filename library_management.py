@@ -1,151 +1,132 @@
-import os
+
 import json
-import sys
+import os
+import streamlit as st
 
-# ANSI color codes
-RESET = "\033[0m"
-RED = "\033[91m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-BLUE = "\033[94m"
-CYAN = "\033[96m"
-MAGENTA = "\033[95m"
 
-print(f"\n{BLUE}--------------\t Welcome to Library Management System \t --------------{RESET}")
-
+# Checking that file exits or not
 FILE_NAME = "library_management.json"
 
 def load_books():
     if os.path.exists(FILE_NAME):
-        with open(FILE_NAME, "r") as file:
-            try:
+        try:
+            with open(FILE_NAME, "r") as file:
+                print("Books loaded successfully!")
                 return json.load(file)
-            except json.JSONDecodeError:
-                return []  # Handle empty or corrupted file
-    return []
+        except:
+            return []
+    else:
+        return []
 
 books = load_books()
 
-def save_books(books):    
+def save_books(books):
     with open(FILE_NAME, "w") as file:
         json.dump(books, file, indent=4)
 
+def books_name():
+    books_names = []
+    for book in books:
+        books_names.append(book["title"])
+    return books_names
+        
+
+# ? Add book
 def add_book():
-    print(f"\n{GREEN}--------------\t Add Book \t --------------{RESET}\n")
-    book_name = input("Enter book name: ")
-    author_name = input("Enter author name: ")
-    publication_year = input("Enter book publication year: ")
-    book_price = input("Enter book price: ")
-    book_quantity = input("Enter book quantity: ")
-    book_genre = input("Enter book genre: ")
-    isRead = input("Have you read this book? (yes/no) ").lower()
-    
-    book = {
-        "title": book_name, 
-        "author": author_name, 
-        "publish_year": publication_year, 
-        "price": book_price, 
-        "qnty": book_quantity, 
-        "genre": book_genre,
-        "isRead": isRead
-    }
-    
-    books.append(book)
-    save_books(books)
-    print(f"\n{CYAN}Book added successfully!{RESET}\n")
-    menu()
+    with st.form("add_book_form"):
+        book_title = st.text_input("Book Name", placeholder="Enter the Book Name")
+        book_author = st.text_input("Author Name", placeholder="Enter the Book Author Name")
+        publication_year = st.text_input("Publication Year",placeholder="Enter the Book published year")
+        book_price = st.number_input("Book Price", min_value=0,placeholder="Enter the Book price", value=5000)
+        book_quantity = st.number_input("Book Quantity", min_value=1,placeholder="Enter the Book Quantity", value=10)
+        book_genre = st.text_input("Book Genre", placeholder="Enter the Book Genre")
+        is_read = st.checkbox("Have you read this book?")
+        newBook = {
+                "title":book_title,
+                "author":book_author,
+                "genre":book_genre,
+                "price":book_price,
+                "qnty":book_quantity,
+                "publish_year":publication_year,
+                "isRead":is_read
+        }
+        if st.form_submit_button("Add Book"):
+            books.append(newBook)
+            save_books(books)
 
+
+# ? Remove Book
 def remove_book():
-    print(f"\n{RED}--------------\t Delete Book \t --------------{RESET}\n")
-    book_name = input("Enter the title of the book to remove: ")
-    global books
-    books = [book for book in books if book["title"].lower() != book_name.lower()]
-    save_books(books)
-    print(f"\n{GREEN}Book Deleted successfully!{RESET}\n")
-    menu()
+    st.subheader("Remove Book ❌")
+    book_name = st.selectbox("Select the book that you want to delete", books_name())
+    if st.button("Remove Book"):
+            updateBook = [book for book in books if book["title"] != book_name]
+            st.info("Book has been Deleted Successfully")
+            save_books(updateBook)
 
-def display_book():
-    print(f"\n{YELLOW}--------------\t Display Books \t --------------{RESET}\n")
-    if not books:
-        print(f"{RED}No books available{RESET}")   
-    else:
-        print(f"{BLUE}Available Books:{RESET}")
-        for i, book in enumerate(books):
-            print(f"{i+1}) {book['title']} - {book['author']} ({book['publish_year']})")
-    menu()
+# ? View All Books
+def view_books():
+    st.subheader("View All Books 📚")
+    st.dataframe(books, column_config={
+        0:"Book title",
+        1:"Book Author",
+        2:"Genre",
+        3:"Price",
+        4:"Quantity",
+        5:"Publish_year",
+        6:"IsRead"
+    })
 
-def search_book():
-    print(f"\n{MAGENTA}--------------\t Search Book \t --------------{RESET}\n")
-    search_by = input("Search by:\n1. Title\n2. Author\nEnter choice: ")
 
-    if search_by == "1":
-        book_title = input("Enter the book title: ")
-        matching_books = [book for book in books if book["title"].lower() == book_title.lower()]
-        if matching_books:
-            for i, match_book in enumerate(matching_books):
-                print(f"{i+1}.	{match_book['title']}")
+# ? Search Books
+def search_books():
+    st.subheader("Search Books 🔍")
+    search_by = st.radio("Search by", ["Title", "Author"])
+    search_value = st.text_input("Enter Search Value")
+    if st.button("Search"):
+        if search_by == "Title":
+            filtered_books = [book for book in books if search_value.lower() in book["title"].lower()]
         else:
-            print(f"{RED}No Book found with the title: {book_title}{RESET}")
-    
-    elif search_by == "2":
-        book_author = input("Enter the book author: ")
-        matching_books = [book for book in books if book["author"].lower() == book_author.lower()]
-        if matching_books:
-            for i, match_book in enumerate(matching_books):
-                print(f"{i+1}.	{match_book['title']}")
-        else:
-            print(f"{RED}No Book found by author: {book_author}{RESET}")
-    
-    else:
-        print(f"{RED}Invalid choice, please select 1 or 2.{RESET}")
-    
-    menu()
+            filtered_books = [book for book in books if search_value.lower() in book["Author"].lower()]
 
-def display_statistics():
-    print(f"\n{CYAN}--------------\t Display Statistics \t --------------{RESET}\n")
-    total_books = len(books)
-    print(f"{BLUE}Total Books: {total_books}{RESET}")
-    
-    read_books = [book for book in books if book["isRead"] in ["yes", "y"]]
-    if total_books > 0:
-        percentage = (len(read_books) / total_books) * 100
-        print(f"{GREEN}Percentage of read books: {percentage:.2f}%{RESET}")
-    else:
-        print(f"{RED}No books available to calculate statistics.{RESET}")
-    
-    menu()
-
-def menu():
-    print(f"\n{YELLOW}1. Add Book{RESET}")
-    print(f"{YELLOW}2. Remove Book{RESET}")
-    print(f"{YELLOW}3. Search Book{RESET}")
-    print(f"{YELLOW}4. Display Books{RESET}")
-    print(f"{YELLOW}5. Display Statistics{RESET}")
-    print(f"{RED}6. Exit{RESET}\n")
-    
-    try:
-        user_choice = int(input("Enter your choice: "))
-        if user_choice == 1:
-            add_book()
-        elif user_choice == 2:
-            remove_book()
-        elif user_choice == 3:
-            search_book()
-        elif user_choice == 4:
-            display_book()
-        elif user_choice == 5:
-            display_statistics()
-        elif user_choice == 6:
-            print(f"{RED}Exiting... Goodbye!{RESET}")
-            sys.exit()
-        else:
-            print(f"{RED}Invalid choice! Please enter a number between 1-6.{RESET}")
-            menu()
-    except ValueError:
-        print(f"{RED}Invalid input! Please enter a number.{RESET}")
-        menu()
-
-menu()
+        st.dataframe(filtered_books, column_config={
+            0:"Book title",
+            1:"Book Author",
+            2:"Genre",
+            3:"Price",
+            4:"Quantity",
+            5:"Publish_year",
+            6:"IsRead"
+        })
 
 
-# Now your program will be more visually appealing with color-coded messages! Let me know if you want any adjustments. 🚀
+# ? Update Book
+def update_book():
+    st.subheader("Update Book 📝")
+    book_name = st.selectbox("Select the book that you want to update", books_name())
+    update_thing = st.radio("Select the thing that you want to update", ["Title", "Author", "Genre", "Price", "Quantity", "Publish_year", "IsRead"])
+    if update_thing == "Title":
+        new_title = st.text_input("New Title", value=books[books_name().index(book_name)]["title"])
+        books[books_name().index(book_name)]["title"] = new_title
+    if update_thing == "Author":
+        new_author = st.text_input("New Author", value=books[books_name().index(book_name)]["author"])
+        books[books_name().index(books_name)]["author"] = new_author
+    
+
+st.set_page_config(page_title="Library Management", layout="wide")
+st.title("📚 Library Management System")
+
+menu = ["Add Book", "Remove Book", "View Book", "Update Book", "Search Book"]
+
+choice = st.sidebar.selectbox("Menu",menu)
+
+if choice == "Add Book":
+    add_book()
+elif choice == "Remove Book":
+    remove_book()
+elif choice == "View Book":
+    view_books()
+elif choice == "Search Book":
+    search_books()
+elif choice == "Update Book":
+    update_book()
