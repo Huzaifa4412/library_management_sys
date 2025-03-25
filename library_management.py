@@ -30,6 +30,7 @@ def books_name():
     return books_names
         
 
+
 # ? Add book
 def add_book():
     with st.form("add_book_form"):
@@ -131,11 +132,54 @@ def update_book():
     
 
 st.set_page_config(page_title="Library Management", layout="wide")
-st.title("📚 Library Management System")
 
+# Coding for adding background image
+st.markdown(
+        """
+        <style>
+        .stApp {
+            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2128&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+)
+
+# coding for adding transparent sidebar
+def add_transparent_sidebar():
+    st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        background-color: rgba(200, 225, 255, 0.4); ; 
+        backdrop-filter: blur(6px); 
+    }
+    
+    [data-testid="stSidebar"] .element-container {
+        color: black;
+        font-size: 18px;
+    }
+    
+    [data-testid="stSidebar"] {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    
+    </style>
+    """, unsafe_allow_html=True)
+
+st.title("📚 Library Management System") 
 menu = ["Add Book", "Remove Book", "View Book", "Update Book", "Search Book"]
 
-choice = st.sidebar.selectbox("Menu",menu)
+with st.sidebar:
+    st.markdown("<h2 style='fontSize='20px''>Library Management System</h2>", unsafe_allow_html=True)
+    st.caption("This is a simple library management system that allows you to add, remove, update, and search for books.")
+    choice = st.selectbox("Menu",menu)
+    
+add_transparent_sidebar()
 
 if choice == "Add Book":
     add_book()
