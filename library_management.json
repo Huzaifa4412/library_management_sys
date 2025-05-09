@@ -1,11 +1,11 @@
 [
     {
-        "title": "bible of js",
-        "author": "unkhown",
-        "genre": "coding",
+        "title": "coding world",
+        "author": "Huzaifa",
+        "genre": "Coding",
         "price": 5000,
         "qnty": 10,
-        "publish_year": "2023",
-        "isRead": true
+        "publish_year": "1940",
+        "isRead": false
     }
 ]
